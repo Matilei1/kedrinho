@@ -1,0 +1,13 @@
+# Here you can define all your datasets by using simple YAML syntax.
+#
+# Documentation for this file format can be found in "The Data Catalog"
+# Link: https://docs.kedro.org/en/stable/data/data_catalog.html
+weatherAus:
+  type: pandas.CSVDataset
+  filepath: notebooks/weatherAUS.csv
+  load_args:
+    sep: ','
+  save_args:
+    index: False
+    date_format: '%Y-%m-%d %H:%M'
+    decimal: .
