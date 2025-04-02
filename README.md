@@ -18,10 +18,9 @@ Activa el entorno virtual en Windows usando CMD o PowerShell (venv\Scripts\activ
 Permite la ejecución de scripts en PowerShell si es necesario (Set-ExecutionPolicy Unrestricted -Scope Process).
 
 
-## Paso2: Instalar dependencias
-
-Paso 2: Instalar las dependencias
+Paso 2: Instalar dependencias
 Una vez el entorno esté activado, instala todas las librerías necesarias utilizando pip. Ejecuta el siguiente comando para instalar las dependencias del proyecto y algunas librerías adicionales:
 
-```bash
+bash
+Copiar
 pip install -r requirements.txt && pip install pandas kedro-datasets kedro-viz
