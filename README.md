@@ -7,7 +7,7 @@ Este archivo proporciona instrucciones para configurar el entorno de desarrollo 
 Primero, debes crear el entorno virtual y luego activarlo. Ejecuta los siguientes comandos:
 
 ```bash
-python -m venv venv && venv\Scripts\activate && Set-ExecutionPolicy Unrestricted -Scope Process
+python -m venv venv && venv\Scripts\activate && Set-ExecutionPolicy Unrestricted -Scope Process.
 
 Este comando:
 
@@ -18,7 +18,7 @@ Activa el entorno virtual en Windows usando CMD o PowerShell (venv\Scripts\activ
 Permite la ejecución de scripts en PowerShell si es necesario (Set-ExecutionPolicy Unrestricted -Scope Process).
 
 
-### Paso 2: Instalar dependencias
+## Paso 2: Instalar dependencias
 Una vez el entorno esté activado, instala todas las librerías necesarias utilizando pip. Ejecuta el siguiente comando para instalar las dependencias del proyecto y algunas librerías adicionales:
 
 bash
