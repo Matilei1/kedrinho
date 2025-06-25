@@ -1,28 +1,22 @@
 from kedro.pipeline import Pipeline, node, pipeline
 
-from .nodes import preprocess_weatherAUS, fillNullValues, dropNullValues, clean_weatherAus_data
+from .nodes import clean_weatheraus_data,guardar_en_bd
 
 def create_pipeline(**kwargs) -> Pipeline:
     return pipeline(
         [
             node(
-                func=preprocess_weatherAUS,
+                func=clean_weatheraus_data,
                 inputs="weatherAus", 
-                outputs="preprocessed_weatherAUS",#Salida que se utiliza en el siguiente nodo
-                name="preprocess_weatherAUS_node",
+                outputs="weather_cleaned",#Dataset limpio
+                name="clean_weatheraus_node",
             ),
             node(
-                func=clean_weatherAus_data,
-                inputs="preprocessed_weatherAUS",  # Usando la salida del nodo anterior
-                outputs="cleaned_weatherAUS",  # Resultado final después de la limpieza
-                name="clean_weatherAus_data_node"
-            ),
-            node(
-                func=fillNullValues,
-                inputs="cleaned_weatherAUS",  # Usar salida del nodo anterior
-                outputs="weatherAUS_filled",  # Resultado después de rellenar los valores nulos
-                name="fill_null_values_node"
-            ),
-           
+                func=guardar_en_bd,
+                inputs="weather_cleaned",
+                outputs="weather_from_db",
+                name="guardar_weather_en_bd"
+)
+
         ]
     )

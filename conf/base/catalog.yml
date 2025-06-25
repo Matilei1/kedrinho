@@ -4,7 +4,7 @@
 # Link: https://docs.kedro.org/en/stable/data/data_catalog.html
 weatherAus:
   type: pandas.CSVDataset
-  filepath: ../notebooks/weatherAUS.csv
+  filepath: data/01_raw/weatherAUS.csv
   load_args:
     sep: ','
   save_args:
@@ -12,16 +12,19 @@ weatherAus:
     date_format: '%Y-%m-%d %H:%M'
     decimal: .
   
-# El dataset limpio (después de la limpieza de localidades)
-cleaned_weatherAUS:
+# El dataset limpio
+weather_cleaned:
   type: pandas.CSVDataset
-  filepath: data/03_primary/cleaned_weatherAUS.csv
+  filepath: data/03_primary/weatherAUS_limpio.csv
   save_args:
     index: False
 
-# Dataset con valores nulos rellenos con la mediana
-weatherAUS_filled:
-  type: pandas.CSVDataset
-  filepath: data/03_primary/weatherAUS_filled.csv
+#Definir el dataset
+weather_from_db:
+  type: kedro_datasets.pandas.SQLTableDataset
+  table_name: weather_cleaned
+  credentials: postgres_credentials
+  load_args:
+    schema: public
   save_args:
-    index: False
+    if_exists: replace

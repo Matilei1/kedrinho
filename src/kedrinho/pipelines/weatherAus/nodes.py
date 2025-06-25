@@ -18,57 +18,47 @@ def _parse_money(x: pd.Series) -> pd.Series:
 
 import pandas as pd
 
-def preprocess_weatherAUS(weatherAUS: pd.DataFrame) -> pd.DataFrame:
-    """Preprocesses the weatherAUS data without knowing the columns beforehand."""
-    
-    # Imprime las primeras filas del DataFrame para inspeccionar los datos
-    print(weatherAUS.head())  # Muestra los primeros registros del DataFrame
-    
-    # Inspecciona las columnas de tu DataFrame
-    print(f"Column names: {weatherAUS.columns.tolist()}")  # Muestra las columnas disponibles
-    
-    print(weatherAUS.describe())
-    # Retorna el DataFrame tal cual
-    print('existen ' + str(weatherAUS.shape[1]) + ' columnas')
-    print('con un total de ' + str(weatherAUS.shape[0]) + ' filas')
-    return weatherAUS
+import pandas as pd
 
-def seeNullValues(weatherAUS: pd.DataFrame) -> pd.DataFrame:   
-    # Ver cuántos valores nulos hay en cada columna
-    print(weatherAUS.isnull().sum())
+def clean_weatheraus_data(df: pd.DataFrame) -> pd.DataFrame:
 
-def fillNullValues(weatherAUS: pd.DataFrame) -> pd.DataFrame:   
-    # Rellenar valores nulos con la media (ejemplo para datos numéricos)
-    #weatherAUS.fillna(weatherAUS.mean(), inplace=True)
-    return weatherAUS.fillna(weatherAUS.mean())
+   # Nodo de preprocesamiento para el dataset weatherAUS.
 
+    # 1. Conversión de fechas y descomposición
+    df['Date'] = pd.to_datetime(df['Date'], errors='coerce')
+    df['Year'] = df['Date'].dt.year
+    df['Month'] = df['Date'].dt.month
+    df['Day'] = df['Date'].dt.day
 
-def dropNullValues(weatherAUS: pd.DataFrame) -> pd.DataFrame:   
-    #eliminar filas con valores nulos
-   # weatherAUS.dropna(inplace=True)
-   return weatherAUS.dropna()
+    # 2. Eliminación de columnas con más del 40% de nulos
+    cols_to_drop = ['Evaporation', 'Sunshine', 'Cloud9am', 'Cloud3pm']
+    df = df.drop(columns=cols_to_drop, errors='ignore')
 
-def convertDateFormat(weatherAUS: pd.DataFrame) -> pd.DataFrame:
-    #convertimos fechas por separado, para facilitar el analisis historico
-    weatherAUS["Date"] = pd.to_datetime(weatherAUS["Date"])
-    weatherAUS["Year"] = weatherAUS["Date"].dt.year
-    weatherAUS["Month"] = weatherAUS["Date"].dt.month
-    weatherAUS["Day"] = weatherAUS["Date"].dt.day #Solo el número
-    return weatherAUS
-#Filtro de localidades
-#---------
-def clean_weatherAus_data(weatherAUS: pd.DataFrame) -> pd.DataFrame:
-    #Filtrar localidades que si se dedican a la agricultura
+    # 3. Relleno de columnas numéricas con la media
+    numeric_cols = df.select_dtypes(include='number').columns
+    df[numeric_cols] = df[numeric_cols].fillna(df[numeric_cols].mean())
+
+    # 4. Rellenar solo estas categóricas con 'Desconocido'
+    categorical_cols = ['Location', 'WindGustDir', 'WindDir9am', 'WindDir3pm', 'RainToday']
+    for col in categorical_cols:
+        if col in df.columns:
+            df[col] = df[col].fillna('Desconocido')
+
+    # 5. Filtrado de localidades agrícolas relevantes
     localidades_permitidas = [
         'Adelaide', 'Albury', 'Ballarat', 'Bendigo', 'Brisbane', 'Cairns', 'Canberra',
         'Darwin', 'GoldCoast', 'Launceston', 'Mildura', 'Moree', 'MountGambier',
         'Newcastle', 'Perth', 'Sale', 'Sydney', 'WaggaWagga', 'Wollongong'
     ]
-    weatherAUS = weatherAUS[weatherAUS['Location'].isin(localidades_permitidas)]
+    df = df[df['Location'].isin(localidades_permitidas)].copy()
 
-     # One-hot encoding para variables categóricas excepto Location. 
-     # Quedan como columnas binarias
-    categorical_cols = weatherAUS.select_dtypes(include=['object']).columns.drop('Location')
-    df_encoded = pd.get_dummies(weatherAUS, columns=categorical_cols, dummy_na=True, drop_first=True)
+    # 6. Codificación one-hot para categóricas (excepto 'Location')
+    # Nota: drop_first=True evita multicolinealidad
+    categorical_cols = df.select_dtypes(include='object').columns.drop('Location', errors='ignore')
+    df = pd.get_dummies(df, columns=categorical_cols, dummy_na=True, drop_first=True)
 
-    return df_encoded
+    return df
+
+def guardar_en_bd(df: pd.DataFrame) -> pd.DataFrame:
+    # Simplemente retorna el DataFrame para que Kedro lo guarde vía DataCatalog
+    return df
