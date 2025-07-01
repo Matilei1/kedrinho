@@ -16,6 +16,7 @@ Crea el entorno virtual (python -m venv venv).
 Activa el entorno virtual en Windows usando CMD o PowerShell (venv\Scripts\activate).
 
 Permite la ejecución de scripts en PowerShell si es necesario (Set-ExecutionPolicy Unrestricted -Scope Process).
+docker compose up -d
 
 # Instalar Dependencias:
 Una vez el entorno esté activado, instala todas las librerías necesarias utilizando pip. Ejecuta el siguiente comando para instalar las dependencias del proyecto y algunas librerías adicionales:
