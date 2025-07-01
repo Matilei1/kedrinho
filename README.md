@@ -21,5 +21,6 @@ Permite la ejecución de scripts en PowerShell si es necesario (Set-ExecutionPol
 Una vez el entorno esté activado, instala todas las librerías necesarias utilizando pip. Ejecuta el siguiente comando para instalar las dependencias del proyecto y algunas librerías adicionales:
 
 pip install -r requirements.txt && pip install pandas kedro-datasets kedro-viz
+pip install psycopg2-binary
 
 Una vez instaladas las librerias, puedes ejecutar kedro con el comando "kedro run" o visualizar las pipelines con el comando "kedro viz"
